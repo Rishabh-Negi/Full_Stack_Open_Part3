@@ -25,8 +25,15 @@ notes = [
     }
 ]
 
-app.get('/api/persons', (req, resp) => { 
+app.get('/api/persons', (req, resp) => {
     resp.json(notes)
+})
+
+app.get('/info', (req, resp) => {
+    resp.send(`<div>
+    <p>Phonebook has info for ${notes.length} people</p> 
+    <p>${Date()}</p>
+    </div>`)
 })
 
 const PORT = 3001
