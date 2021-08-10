@@ -36,9 +36,16 @@ app.get('/api/persons/:id', (req, resp) => {
     if (person) {
         resp.json(person)
     } else {
-        resp.status(404).send()
+        resp.status(404).end()
     }
 
+})
+
+app.delete('/api/persons/:id', (req, resp) => {
+    const id = Number(req.params.id)
+    persons = persons.filter(person => person.id !== id)
+
+    resp.status(204).end()
 })
 
 app.get('/info', (req, resp) => {
@@ -47,6 +54,7 @@ app.get('/info', (req, resp) => {
     <p>${Date()}</p>
     </div>`)
 })
+
 
 const PORT = 3001
 app.listen(PORT, () => {
