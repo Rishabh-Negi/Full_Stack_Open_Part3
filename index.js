@@ -55,10 +55,11 @@ app.get('/api/persons/:id', (req, resp) => {
 })
 
 app.delete('/api/persons/:id', (req, resp) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    resp.status(204).end()
+    Person.findByIdAndRemove(req.params.id)
+        .then(result => {
+            resp.status(204).end()
+        })
+        .catch(error => { response.status(404).end() })
 })
 
 app.post('/api/persons', (req, resp) => {
