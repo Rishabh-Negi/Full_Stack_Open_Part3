@@ -64,10 +64,32 @@ app.post('/api/persons', (req, resp) => {
 
 })
 
+app.put('/api/persons/:id', (req, resp, next) => {
+    const body = req.body
+    if (!body.name || !body.number) {
+        return resp.status(400).json({
+            error: "Name or Number missing"
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+    }
+
+    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+        .then(updatedPerson => {
+            if (updatedPerson)
+                resp.json(updatedPerson)
+            else
+                res.status(404).end()
+        }).catch(error => next(error))
+})
+
 
 app.get('/info', (req, resp) => {
     resp.send(`<div>
-    <p>Phonebook has info for ${persons.length} people</p> 
+    <p>Phonebook has info for ${0} people</p> 
     <p>${Date()}</p>
     </div>`)
 })
