@@ -69,20 +69,15 @@ app.post('/api/persons', (req, resp) => {
         })
     }
 
-    const nameExists = persons.some(person => person.name === body.name)
-    if (nameExists) {
-        return resp.status(422).json({
-            error: "Name already exists"
-        })
-    }
+    const person = new Person({
+        name: body.name,
+        number: body.number,
+    })
 
-    const person = {
-        id: generateId(),
-        ...body
-    }
-    persons = persons.concat(person)
-    // console.log(persons)
-    resp.json(person)
+    person.save().then(savedPerson => {
+        resp.json(savedPerson)
+    })
+
 })
 
 app.get('/info', (req, resp) => {
