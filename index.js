@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 
@@ -14,47 +16,42 @@ morgan.token('body', function (req, res) {
 })
 
 
-persons = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-]
+// persons = [
+//     {
+//         "id": 1,
+//         "name": "Arto Hellas",
+//         "number": "040-123456"
+//     },
+//     {
+//         "id": 2,
+//         "name": "Ada Lovelace",
+//         "number": "39-44-5323523"
+//     },
+//     {
+//         "id": 3,
+//         "name": "Dan Abramov",
+//         "number": "12-43-234345"
+//     },
+//     {
+//         "id": 4,
+//         "name": "Mary Poppendieck",
+//         "number": "39-23-6423122"
+//     }
+// ]
 
 const generateId = () => {
     return Math.random() * 5000
 }
 
 app.get('/api/persons', (req, resp) => {
-    resp.json(persons)
+    Person.find({}).then(person => {
+        resp.json(person)
+    })
 })
 
 app.get('/api/persons/:id', (req, resp) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        resp.json(person)
-    } else {
-        resp.status(404).end()
-    }
-
+    Person.findById(req.params.id)
+        .then(person => resp.json(person))
 })
 
 app.delete('/api/persons/:id', (req, resp) => {
