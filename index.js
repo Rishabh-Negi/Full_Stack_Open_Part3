@@ -88,10 +88,12 @@ app.put('/api/persons/:id', (req, resp, next) => {
 
 
 app.get('/info', (req, resp) => {
-    resp.send(`<div>
-    <p>Phonebook has info for ${0} people</p> 
-    <p>${Date()}</p>
-    </div>`)
+    Person.find({}).then(result => {
+        resp.send(`<div>
+        <p>Phonebook has info for ${result.length} people</p> 
+        <p>${Date()}</p>
+        </div>`)
+    })
 })
 
 const unknownEndPoint = (req, resp) => {
