@@ -6,38 +6,15 @@ const Person = require('./models/person')
 
 const app = express()
 
+app.use(express.static('build'))
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 app.use(cors())
-app.use(express.static('build'))
 
 morgan.token('body', function (req, res) {
     return JSON.stringify(req.body)
 })
 
-
-// persons = [
-//     {
-//         "id": 1,
-//         "name": "Arto Hellas",
-//         "number": "040-123456"
-//     },
-//     {
-//         "id": 2,
-//         "name": "Ada Lovelace",
-//         "number": "39-44-5323523"
-//     },
-//     {
-//         "id": 3,
-//         "name": "Dan Abramov",
-//         "number": "12-43-234345"
-//     },
-//     {
-//         "id": 4,
-//         "name": "Mary Poppendieck",
-//         "number": "39-23-6423122"
-//     }
-// ]
 
 const generateId = () => {
     return Math.random() * 5000
@@ -49,17 +26,23 @@ app.get('/api/persons', (req, resp) => {
     })
 })
 
-app.get('/api/persons/:id', (req, resp) => {
+app.get('/api/persons/:id', (req, resp, next) => {
     Person.findById(req.params.id)
-        .then(person => resp.json(person))
+        .then(person => {
+            if (person)
+                resp.json(person)
+            else
+                resp.status(404).end()
+        })
+        .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, resp) => {
+app.delete('/api/persons/:id', (req, resp, next) => {
     Person.findByIdAndRemove(req.params.id)
         .then(result => {
             resp.status(204).end()
         })
-        .catch(error => { response.status(404).end() })
+        .catch(error => next(error))
 })
 
 app.post('/api/persons', (req, resp) => {
@@ -81,12 +64,30 @@ app.post('/api/persons', (req, resp) => {
 
 })
 
+
 app.get('/info', (req, resp) => {
     resp.send(`<div>
     <p>Phonebook has info for ${persons.length} people</p> 
     <p>${Date()}</p>
     </div>`)
 })
+
+const unknownEndPoint = (req, resp) => {
+    resp.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndPoint)
+
+const errorHandler = (error, req, resp, next) => {
+    console.error(error)
+    if (error.name === 'CastError') {
+        return resp.status(400).end()
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
 
 
 const PORT = process.env.PORT || 3001
