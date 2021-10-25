@@ -21,8 +21,8 @@ const generateId = () => {
 }
 
 app.get('/api/persons', (req, resp) => {
-    Person.find({}).then(person => {
-        resp.json(person)
+    Person.find({}).then(persons => {
+        resp.json(persons.map(person => person.toJSON()))
     })
 })
 
@@ -30,7 +30,7 @@ app.get('/api/persons/:id', (req, resp, next) => {
     Person.findById(req.params.id)
         .then(person => {
             if (person)
-                resp.json(person)
+                resp.json(person.toJSON())
             else
                 resp.status(404).end()
         })
@@ -58,9 +58,12 @@ app.post('/api/persons', (req, resp) => {
         number: body.number,
     })
 
-    person.save().then(savedPerson => {
-        resp.json(savedPerson)
-    })
+    person.save()
+        .then(result => result.toJSON())
+        .then(savedPerson => {
+            resp.json(savedPerson)
+        })
+        .catch(error => next(error))
 
 })
 
@@ -80,7 +83,7 @@ app.put('/api/persons/:id', (req, resp, next) => {
     Person.findByIdAndUpdate(req.params.id, person, { new: true })
         .then(updatedPerson => {
             if (updatedPerson)
-                resp.json(updatedPerson)
+                resp.json(updatedPerson.toJSON())
             else
                 res.status(404).end()
         }).catch(error => next(error))
@@ -106,6 +109,9 @@ const errorHandler = (error, req, resp, next) => {
     console.error(error)
     if (error.name === 'CastError') {
         return resp.status(400).end()
+    }
+    if (error.name === 'ValidationError') {
+        return resp.status(422).end()
     }
 
     next(error)
