@@ -11,30 +11,23 @@ const notesRouter = require('./controller/notes')
 const mongoose = require('mongoose')
 
 
-// logger.info(`connecting to`, config.MONGODB_URI)
+logger.info(`connecting to`, config.MONGODB_URI)
 
-// mongoose.connect(config.MONGODB_URI)
-//     .then(() => {
-//         logger.info('connected to mongoDB')
-//     })
-//     .catch((error) => {
-//         logger.info('failed to connect to mongoDB', error.message)
-//     })
+mongoose.connect(config.MONGODB_URI)
+    .then(() => {
+        logger.info('connected to mongoDB')
+    })
+    .catch((error) => {
+        logger.info('failed to connect to mongoDB', error.message)
+    })
 
-
-
+app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
-app.use(express.json())
 app.use(middleware.requresLogger)
 
-// app.use('/api/notes', notesRouter)
-
-app.get('/', (req, resp) => {
-    resp.status(200).json("lol")
-})
-
+app.use('/api/notes', notesRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
-module.export = app
+module.exports = app

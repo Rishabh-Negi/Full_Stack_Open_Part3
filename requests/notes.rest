@@ -6,6 +6,6 @@
 #     "number": "9912991214"
 # }
 
-GET http://localhost:3001
+GET http://localhost:3001/api/notes
 
 # DELETE  http://localhost:3001/api/notes/6164598f0fc3ce11d6929bc5

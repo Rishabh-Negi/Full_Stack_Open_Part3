@@ -13,7 +13,7 @@ const unknownEndpoint = (req, resp) => {
 }
 const errorHandler = (error, req, resp, next) => {
     logger.info(error.message)
-    return resp.status(404).send({ error: error.message })
+    // resp.status(404).send({ error: error.message })
     next(error)
 }
 
