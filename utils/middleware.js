@@ -12,8 +12,14 @@ const unknownEndpoint = (req, resp) => {
     resp.status(404).send({ error: 'unknown endpoint' })
 }
 const errorHandler = (error, req, resp, next) => {
-    logger.info(error.message)
-    // resp.status(404).send({ error: error.message })
+    logger.error(error.message)
+
+    if (error.name === 'CastError') {
+        resp.status(400).json({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        resp.status(404).json({ error: error.message })
+    }
+
     next(error)
 }
 
