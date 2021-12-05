@@ -2,8 +2,9 @@
 # Content-Type: application/json
 
 # {
-#     "name":"Ri",
-#     "number": "9912991214"
+#     "content": "hello",
+#     "date": "",
+#     "important": true,
 # }
 
 GET http://localhost:3001/api/notes

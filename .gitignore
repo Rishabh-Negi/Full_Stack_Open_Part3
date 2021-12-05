@@ -9,7 +9,7 @@ node_modules
 requests
 
 # testing
-/coverage
+/test
 
 # production
 /build
