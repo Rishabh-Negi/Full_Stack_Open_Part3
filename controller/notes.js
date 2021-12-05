@@ -4,7 +4,7 @@ const note = require('../models/notes')
 notesRouter.get('/', async (req, resp) => {
     const notes = note.find({})
     console.log(notes)
-    resp.json("")
+    resp.json('')
 })
 
 notesRouter.get('/:id', async (req, resp) => {
